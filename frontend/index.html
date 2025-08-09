@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rifas España Y Venezuela</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .modal-venta-cerrada {
+            position: fixed;
+            z-index: 9999;
+            left: 0; top: 0; width: 100vw; height: 100vh;
+            background: rgba(10,30,50,0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #16222A 0%, #3A6073 100%);
+            color: #fff;
+            border-radius: 18px;
+            box-shadow: 0 0 32px #00fff7, 0 0 8px #1a2980;
+            padding: 38px 32px 28px 32px;
+            text-align: center;
+            max-width: 350px;
+            width: 90vw;
+            position: relative;
+        }
+        .modal-content h2 {
+            color: #00fff7;
+            margin-bottom: 12px;
+        }
+        .modal-content p {
+            font-size: 1.15em;
+        }
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 18px;
+            font-size: 2em;
+            color: #00fff7;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .close-modal:hover {
+            color: #fff;
+        }
+        .calculo-precio-box {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            background: rgba(0,255,247,0.07);
+            border-radius: 10px;
+            padding: 10px 12px 6px 12px;
+            box-shadow: 0 0 10px #00fff7 inset;
+        }
+        .calculo-precio-box label {
+            color: #00fff7;
+            font-weight: 500;
+        }
+        #totalBox {
+            color: #fff;
+            font-weight: bold;
+            margin-left: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Venta De Nuemros</h1>
+        <div class="rifa-section">
+            <h2>Elige tus números de rifa</h2>
+            <p class="precio-info">Cada número tiene un costo de <strong>$2</strong></p>
+            <div id="seleccionados" class="seleccionados"></div>
+            <a href="seleccion.html" style="color:#00fff7;text-decoration:underline;">Seleccionar números</a>
+        </div>
+        <form id="pagoForm" enctype="multipart/form-data">
+            <div style="width:100%;display:flex;justify-content:center;margin-bottom:10px;">
+                <button type="button" class="btn-continuar" id="scrollToBottomBtn">Continuar con el pago</button>
+            </div>
+            <label for="banco">Banco:</label>
+            <select id="banco" name="banco" required>
+                <option value="">Seleccione su banco</option>
+                <option value="0102">Banco de Venezuela</option>
+                <option value="0104">Venezolano de Crédito</option>
+                <option value="0105">Banco Mercantil</option>
+                <option value="0108">Banco Provincial</option>
+                <option value="0114">Bancaribe</option>
+                <option value="0115">Banco Exterior</option>
+                <option value="0116">Banco Occidental de Descuento (BOD)</option>
+                <option value="0128">Banco Caroní</option>
+                <option value="0134">Banesco</option>
+                <option value="0137">Sofitasa</option>
+                <option value="0138">Banco Plaza</option>
+                <option value="0146">Banco de Venezuela (ex-Bicentenario)</option>
+                <option value="0151">BFC Banco Fondo Común</option>
+                <option value="0156">100% Banco</option>
+                <option value="0157">DelSur</option>
+                <option value="0163">Banco del Tesoro</option>
+                <option value="0166">Banco Agrícola de Venezuela</option>
+                <option value="0168">Bancrecer</option>
+                <option value="0169">Mi Banco</option>
+                <option value="0171">Banco Activo</option>
+                <option value="0172">Bancamiga</option>
+                <option value="0174">Banplus</option>
+                <option value="0175">Banco Bicentenario</option>
+                <option value="0177">Banco de la Fuerza Armada Nacional Bolivariana (BANFANB)</option>
+                <option value="0191">Banco Nacional de Crédito (BNC)</option>
+            </select>
+
+            <label for="telefono">Teléfono:</label>
+            <input type="tel" id="telefono" name="telefono" required pattern="04[0-9]{9}" placeholder="Ej: 04121234567">
+
+            <label for="cedula">Cédula:</label>
+            <input type="text" id="cedula" name="cedula" required pattern="[0-9]{6,9}" placeholder="Ej: 12345678">
+
+            <label for="comprobante">Comprobante de pago:</label>
+            <input type="file" id="comprobante" name="comprobante" accept="image/*,application/pdf" required>
+
+            <label for="titular">Nombre del titular del pago móvil:</label>
+            <input type="text" id="titular" name="titular" required placeholder="Ej: Juan Pérez">
+
+            <label for="ubicacion">Ciudad/Estado:</label>
+            <input type="text" id="ubicacion" name="ubicacion" required placeholder="Ej: Caracas, Distrito Capital">
+
+            <label for="correo">Correo electrónico:</label>
+            <input type="email" id="correo" name="correo" required placeholder="Ej: usuario@email.com">
+            <input type="hidden" id="numerosSeleccionados" name="numerosSeleccionados">
+            <div style="width:100%;display:flex;justify-content:center;margin-top:10px;">
+                <button type="submit" class="btn-continuar">Continuar con el pago</button>
+            </div>
+        </form>
+        <div class="calculo-precio-box">
+            <label>Tasa BCV (Bs/USD): <input type="number" id="tasaBCV" min="0.01" step="0.0001" value="..." style="width:100px;" readonly></label>
+            <div id="totalBox" style="margin-top:10px;font-size:1.15em;"></div>
+        </div>
+        <div id="ventaCerradaModal" class="modal-venta-cerrada" style="display:none;">
+            <div class="modal-content">
+                <span class="close-modal" id="cerrarModalVenta">&times;</span>
+                <h2>Venta Cerrada</h2>
+                <p>La venta de boletos está cerrada. Espere la próxima rifa.</p>
+            </div>
+        </div>
+        <script>
+        // Botón superior hace scroll al final del formulario
+        document.getElementById('scrollToBottomBtn').onclick = function() {
+            const form = document.getElementById('pagoForm');
+            form.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        };
+        async function verificarVentaActiva() {
+            try {
+                const res = await fetch('http://localhost:3000/api/venta-activa');
+                const data = await res.json();
+                if (!data.ventaActiva) {
+                    document.getElementById('ventaCerradaModal').style.display = 'flex';
+                    document.getElementById('pagoForm').querySelectorAll('input, select, button').forEach(el => el.disabled = true);
+                }
+            } catch {}
+        }
+        window.onload = verificarVentaActiva;
+        document.getElementById('cerrarModalVenta').onclick = function() {
+            document.getElementById('ventaCerradaModal').style.display = 'none';
+        };
+        </script>
+        <div id="mensaje" style="margin-top:15px;"></div>
+        <div class="info">
+            <h2>Datos para el Pago Móvil</h2>
+            <p><strong>Banco:</strong> Banco de Venezuela</p>
+            <p><strong>Teléfono:</strong> 0424-3264652</p>
+            <p><strong>Cédula:</strong> 25976668</p>
+            <p><strong>Precio por número:</strong> $2,00</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        // --- Cálculo automático de totales y tasa BCV automática ---
+        const PRECIO_BOLETO = 2; // Precio fijo del boleto en dólares (solo modificable en el código)
+        async function obtenerTasaBCV() {
+            try {
+                const res = await fetch('http://localhost:3000/api/tasa-bcv');
+                const data = await res.json();
+                if (data.tasaBCV) {
+                    document.getElementById('tasaBCV').value = data.tasaBCV;
+                }
+            } catch {}
+            actualizarTotalesPago();
+        }
+        function actualizarTotalesPago() {
+            const tasa = parseFloat(document.getElementById('tasaBCV').value) || 1;
+            const val = localStorage.getItem('numerosSeleccionados') || '';
+            const cantidad = val ? val.split(',').filter(x=>x).length : 0;
+            const totalUSD = (PRECIO_BOLETO * cantidad).toFixed(2);
+            const totalBs = (PRECIO_BOLETO * cantidad * tasa).toFixed(2);
+            document.getElementById('totalBox').innerHTML = `Total: <span style="color:#00fff7;">$${totalUSD}</span> | <span style="color:#ffd600;">Bs ${totalBs}</span>`;
+        }
+        window.addEventListener('DOMContentLoaded', obtenerTasaBCV);
+        window.addEventListener('storage', actualizarTotalesPago);
+    </script>
+</body>
+</html>

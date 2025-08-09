@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Rifas</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            background: rgba(20, 20, 40, 0.95);
+            color: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .admin-table th, .admin-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #00fff7;
+            text-align: left;
+        }
+        .admin-table th {
+            background: #00fff7;
+            color: #222;
+        }
+        .admin-table tr:last-child td {
+            border-bottom: none;
+        }
+        .admin-table a {
+            color: #00fff7;
+            text-decoration: underline;
+        }
+        .admin-title {
+            color: #00fff7;
+            margin-top: 30px;
+            text-align: center;
+        }
+    .btn-admin {
+        background: linear-gradient(90deg, #00fff7, #1a2980);
+        color: #222;
+        font-weight: bold;
+        border: none;
+        border-radius: 7px;
+        padding: 7px 16px;
+        font-size: 1em;
+        cursor: pointer;
+        margin-bottom: 2px;
+        margin-right: 4px;
+        box-shadow: 0 0 7px #00fff7;
+        transition: background 0.3s;
+    }
+    .btn-admin:hover {
+        background: linear-gradient(90deg, #1a2980, #00fff7);
+    }
+    .btn-admin.liberar {
+        background: linear-gradient(90deg, #ff0055, #1a2980);
+        color: #fff;
+        box-shadow: 0 0 7px #ff0055;
+    }
+    .btn-admin.liberar:hover {
+        background: linear-gradient(90deg, #1a2980, #ff0055);
+    }
+    </style>
+</head>
+<body>
+    <div class="container admin-panel" style="max-width:1200px;margin:40px auto 0 auto;">
+        <h1 class="admin-title">Panel de Administración - Rifas</h1>
+    <div style="margin-bottom:20px;max-width:500px;margin-left:auto;margin-right:auto;">
+            <input type="text" id="filtro" placeholder="Buscar por nombre, número, ciudad, banco, cédula..." style="width:100%;padding:8px;border-radius:6px;border:none;">
+        </div>
+    <div style="max-width:500px;margin:0 auto 30px auto;padding:18px 20px 14px 20px;background:rgba(0,255,247,0.07);border-radius:10px;box-shadow:0 0 10px #00fff7 inset;">
+        <h3 style="color:#00fff7;margin-bottom:10px;">Tasa BCV Manual (solo admin)</h3>
+        <form id="formTasaBCV" style="display:flex;gap:10px;align-items:center;">
+            <label for="tasaManual" style="color:#fff;">Tasa BCV (Bs/USD):</label>
+            <input type="number" id="tasaManual" step="0.0001" min="0.01" style="width:120px;">
+            <button type="submit" class="btn-admin">Actualizar</button>
+            <span id="tasaStatus" style="margin-left:10px;color:#00fff7;"></span>
+        </form>
+        <div id="tasaInfo" style="color:#ffd600;margin-top:6px;font-size:0.98em;"></div>
+    </div>
+    <table class="admin-table" id="tablaCompras" style="min-width:1100px;">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Titular</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Cédula</th>
+                    <th>Ciudad/Estado</th>
+                    <th>Banco</th>
+                    <th>Números</th>
+                    <th>Comprobante</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+    </table>
+    </div>
+    <div style="display:flex;justify-content:center;gap:20px;margin-bottom:30px;">
+        <button class="btn-admin" id="cerrarVentaBtn">Cerrar venta de boletos</button>
+        <button class="btn-admin liberar" id="reiniciarRifaBtn">Reiniciar rifa (liberar todos los números)</button>
+    </div>
+    </div>
+    <script>
+        let comprasGlobal = [];
+        async function cargarCompras() {
+            const res = await fetch('http://localhost:3000/api/compras');
+            comprasGlobal = await res.json();
+            mostrarCompras(comprasGlobal);
+        }
+
+        function mostrarCompras(compras) {
+            const tbody = document.querySelector('#tablaCompras tbody');
+            tbody.innerHTML = '';
+            compras.slice().reverse().forEach((compra, idx) => {
+                const tr = document.createElement('tr');
+                let acciones = '';
+                if (String(compra.estado).toLowerCase() !== 'confirmado') {
+                    acciones = `<button class='btn-admin' onclick="confirmarPago(${compras.length-1-idx})">Confirmar</button> <button class='btn-admin liberar' onclick="liberarCompra(${compras.length-1-idx})">Liberar</button>`;
+                }
+                tr.innerHTML = `
+                    <td>${new Date(compra.fecha).toLocaleString()}</td>
+                    <td>${compra.titular || ''}</td>
+                    <td>${compra.correo || ''}</td>
+                    <td>${compra.telefono}</td>
+                    <td>${compra.cedula}</td>
+                    <td>${compra.ubicacion || ''}</td>
+                    <td>${compra.banco}</td>
+                    <td>${Array.isArray(compra.numerosSeleccionados) ? compra.numerosSeleccionados.join(', ') : ''}</td>
+                    <td>${compra.comprobante ? `<a href="http://localhost:3000/uploads/${compra.comprobante}" target="_blank">Ver</a>` : ''}</td>
+                    <td>${String(compra.estado).toLowerCase() === 'confirmado' ? '<span style=\'color:#00fff7\'>Confirmado</span>' : '<span style=\'color:#ff0\'>Pendiente</span>'}</td>
+                    <td>${acciones}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function confirmarPago(id) {
+            if (!confirm('¿Confirmar el pago y enviar correo al cliente?')) return;
+            const res = await fetch('http://localhost:3000/api/confirmar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            });
+            const data = await res.json();
+            alert(data.mensaje || data.error);
+            cargarCompras();
+        }
+
+        async function liberarCompra(id) {
+            if (!confirm('¿Liberar estos números? Esta acción no se puede deshacer.')) return;
+            const res = await fetch('http://localhost:3000/api/liberar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            });
+            const data = await res.json();
+            alert(data.mensaje || data.error);
+            cargarCompras();
+            // Notificar a la página de selección para recargar
+            fetch('http://localhost:3000/api/notificar-liberacion', { method: 'POST' });
+        }
+
+        document.getElementById('filtro').addEventListener('input', function() {
+            const val = this.value.trim().toLowerCase();
+            if (!val) return mostrarCompras(comprasGlobal);
+            const filtradas = comprasGlobal.filter(compra => {
+                return (
+                    (compra.titular && compra.titular.toLowerCase().includes(val)) ||
+                    (compra.telefono && compra.telefono.toLowerCase().includes(val)) ||
+                    (compra.cedula && compra.cedula.toLowerCase().includes(val)) ||
+                    (compra.ubicacion && compra.ubicacion.toLowerCase().includes(val)) ||
+                    (compra.banco && compra.banco.toLowerCase().includes(val)) ||
+                    (Array.isArray(compra.numerosSeleccionados) && compra.numerosSeleccionados.map(n=>n.toString()).join(',').includes(val))
+                );
+            });
+            mostrarCompras(filtradas);
+        });
+
+        document.getElementById('cerrarVentaBtn').addEventListener('click', async function() {
+            if (!confirm('¿Seguro que deseas cerrar la venta de boletos? Los usuarios no podrán comprar hasta reiniciar la rifa.')) return;
+            await fetch('http://localhost:3000/api/cerrar-venta', { method: 'POST' });
+            alert('Venta de boletos cerrada.');
+        });
+        document.getElementById('reiniciarRifaBtn').addEventListener('click', async function() {
+            if (!confirm('¿Seguro que deseas reiniciar la rifa? Esto liberará todos los números y eliminará todas las compras.')) return;
+            await fetch('http://localhost:3000/api/reiniciar-rifa', { method: 'POST' });
+            alert('Rifa reiniciada. Todos los números están disponibles.');
+            cargarCompras();
+        });
+
+        // --- Tasa BCV manual admin ---
+        async function cargarTasaBCV() {
+            const res = await fetch('http://localhost:3000/api/tasa-bcv');
+            const data = await res.json();
+            if (data.tasaBCV) {
+                document.getElementById('tasaManual').value = data.tasaBCV;
+                document.getElementById('tasaInfo').textContent = data.manual ? 'Tasa establecida manualmente.' : 'Tasa obtenida automáticamente del BCV.';
+            } else {
+                document.getElementById('tasaInfo').textContent = 'No se pudo obtener la tasa actual.';
+            }
+        }
+        document.getElementById('formTasaBCV').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const tasa = document.getElementById('tasaManual').value;
+            const status = document.getElementById('tasaStatus');
+            status.textContent = 'Actualizando...';
+            const res = await fetch('http://localhost:3000/api/tasa-bcv', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tasa })
+            });
+            const data = await res.json();
+            if (data.tasa) {
+                status.textContent = '¡Tasa actualizada!';
+                document.getElementById('tasaInfo').textContent = 'Tasa establecida manualmente.';
+            } else {
+                status.textContent = data.error || 'Error al actualizar.';
+            }
+        });
+        cargarTasaBCV();
+        cargarCompras();
+    </script>
+</body>
+</html>
