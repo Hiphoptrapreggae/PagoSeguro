@@ -20,7 +20,7 @@ document.getElementById('pagoForm').addEventListener('submit', async function(e)
     const formData = new FormData(form);
     document.getElementById('mensaje').textContent = 'Enviando...';
     try {
-        const response = await fetch('http://localhost:3000/api/pago', {
+    const response = await fetch('https://rifasvenezuela.onrender.com/api/pago', {
             method: 'POST',
             body: formData
         });
