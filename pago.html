@@ -149,7 +149,7 @@
 		};
 		async function verificarVentaActiva() {
 			try {
-				const res = await fetch('http://localhost:3000/api/venta-activa');
+				const res = await fetch('https://rifasvenezuela.onrender.com/api/venta-activa');
 				const data = await res.json();
 				if (!data.ventaActiva) {
 					document.getElementById('ventaCerradaModal').style.display = 'flex';
@@ -176,7 +176,7 @@
 	const PRECIO_BOLETO = 2; // Precio fijo del boleto en dólares (solo modificable en el código)
 	async function obtenerTasaBCV() {
 		try {
-			const res = await fetch('http://localhost:3000/api/tasa-bcv');
+			const res = await fetch('https://rifasvenezuela.onrender.com/api/tasa-bcv');
 			const data = await res.json();
 			if (data.tasaBCV) {
 				document.getElementById('tasaBCV').value = data.tasaBCV;

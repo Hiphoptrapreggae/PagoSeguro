@@ -181,19 +181,19 @@
 
         document.getElementById('cerrarVentaBtn').addEventListener('click', async function() {
             if (!confirm('¿Seguro que deseas cerrar la venta de boletos? Los usuarios no podrán comprar hasta reiniciar la rifa.')) return;
-            await fetch('http://localhost:3000/api/cerrar-venta', { method: 'POST' });
+            await fetch('https://rifasvenezuela.onrender.com/api/cerrar-venta', { method: 'POST' });
             alert('Venta de boletos cerrada.');
         });
         document.getElementById('reiniciarRifaBtn').addEventListener('click', async function() {
             if (!confirm('¿Seguro que deseas reiniciar la rifa? Esto liberará todos los números y eliminará todas las compras.')) return;
-            await fetch('http://localhost:3000/api/reiniciar-rifa', { method: 'POST' });
+            await fetch('https://rifasvenezuela.onrender.com/api/reiniciar-rifa', { method: 'POST' });
             alert('Rifa reiniciada. Todos los números están disponibles.');
             cargarCompras();
         });
 
         // --- Tasa BCV manual admin ---
         async function cargarTasaBCV() {
-            const res = await fetch('http://localhost:3000/api/tasa-bcv');
+            const res = await fetch('https://rifasvenezuela.onrender.com/api/tasa-bcv');
             const data = await res.json();
             if (data.tasaBCV) {
                 document.getElementById('tasaManual').value = data.tasaBCV;
@@ -207,7 +207,7 @@
             const tasa = document.getElementById('tasaManual').value;
             const status = document.getElementById('tasaStatus');
             status.textContent = 'Actualizando...';
-            const res = await fetch('http://localhost:3000/api/tasa-bcv', {
+            const res = await fetch('https://rifasvenezuela.onrender.com/api/tasa-bcv', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ tasa })
