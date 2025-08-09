@@ -129,7 +129,7 @@
                     <td>${compra.ubicacion || ''}</td>
                     <td>${compra.banco}</td>
                     <td>${Array.isArray(compra.numerosSeleccionados) ? compra.numerosSeleccionados.join(', ') : ''}</td>
-                    <td>${compra.comprobante ? `<a href="http://localhost:3000/uploads/${compra.comprobante}" target="_blank">Ver</a>` : ''}</td>
+                    <td>${compra.comprobante ? `<a href="https://rifasvenezuela.onrender.com/uploads/${compra.comprobante}" target="_blank">Ver</a>` : ''}</td>
                     <td>${String(compra.estado).toLowerCase() === 'confirmado' ? '<span style=\'color:#00fff7\'>Confirmado</span>' : '<span style=\'color:#ff0\'>Pendiente</span>'}</td>
                     <td>${acciones}</td>
                 `;
