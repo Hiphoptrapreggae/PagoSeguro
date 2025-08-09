@@ -106,7 +106,7 @@
     <script>
         let comprasGlobal = [];
         async function cargarCompras() {
-            const res = await fetch('http://localhost:3000/api/compras');
+            const res = await fetch('https://rifasvenezuela.onrender.com/api/compras');
             comprasGlobal = await res.json();
             mostrarCompras(comprasGlobal);
         }
