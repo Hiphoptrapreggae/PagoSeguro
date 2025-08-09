@@ -139,7 +139,7 @@
 
         async function confirmarPago(id) {
             if (!confirm('¿Confirmar el pago y enviar correo al cliente?')) return;
-            const res = await fetch('http://localhost:3000/api/confirmar', {
+            const res = await fetch('https://rifasvenezuela.onrender.com/api/confirmar', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id })
@@ -151,7 +151,7 @@
 
         async function liberarCompra(id) {
             if (!confirm('¿Liberar estos números? Esta acción no se puede deshacer.')) return;
-            const res = await fetch('http://localhost:3000/api/liberar', {
+            const res = await fetch('https://rifasvenezuela.onrender.com/api/liberar', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id })
@@ -160,7 +160,7 @@
             alert(data.mensaje || data.error);
             cargarCompras();
             // Notificar a la página de selección para recargar
-            fetch('http://localhost:3000/api/notificar-liberacion', { method: 'POST' });
+            fetch('https://rifasvenezuela.onrender.com/api/notificar-liberacion', { method: 'POST' });
         }
 
         document.getElementById('filtro').addEventListener('input', function() {
