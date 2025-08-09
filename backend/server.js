@@ -1,3 +1,5 @@
+// Permitir peticiones https sin validar certificados (solo desarrollo)
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 console.log('server.js iniciado');
 const express = require('express');
 const cors = require('cors');

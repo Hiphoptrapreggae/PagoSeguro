@@ -72,10 +72,7 @@
 	<div class="container">
 	<h1>Venta De Nuemros</h1>
 		<div class="rifa-section">
-			<h2>Elige tus números de rifa</h2>
-			<p class="precio-info">Cada número tiene un costo de <strong>$2</strong></p>
-			<div id="seleccionados" class="seleccionados"></div>
-			<a href="index.html" style="color:#00fff7;text-decoration:underline;">Seleccionar números</a>
+			<a href="index.html" style="color:#00fff7;text-decoration:underline;">Volver a seleccionar números</a>
 		</div>
 		<form id="pagoForm" enctype="multipart/form-data">
 			<div style="width:100%;display:flex;justify-content:center;margin-bottom:10px;">
@@ -174,30 +171,29 @@
 			<p><strong>Precio por número:</strong> $2,00</p>
 		</div>
 	</div>
-	<script src="script.js"></script>
 	<script>
-		// --- Cálculo automático de totales y tasa BCV automática ---
-		const PRECIO_BOLETO = 2; // Precio fijo del boleto en dólares (solo modificable en el código)
-		async function obtenerTasaBCV() {
-			try {
-				const res = await fetch('http://localhost:3000/api/tasa-bcv');
-				const data = await res.json();
-				if (data.tasaBCV) {
-					document.getElementById('tasaBCV').value = data.tasaBCV;
-				}
-			} catch {}
-			actualizarTotalesPago();
-		}
-		function actualizarTotalesPago() {
-			const tasa = parseFloat(document.getElementById('tasaBCV').value) || 1;
-			const val = localStorage.getItem('numerosSeleccionados') || '';
-			const cantidad = val ? val.split(',').filter(x=>x).length : 0;
-			const totalUSD = (PRECIO_BOLETO * cantidad).toFixed(2);
-			const totalBs = (PRECIO_BOLETO * cantidad * tasa).toFixed(2);
-			document.getElementById('totalBox').innerHTML = `Total: <span style="color:#00fff7;">$${totalUSD}</span> | <span style="color:#ffd600;">Bs ${totalBs}</span>`;
-		}
-		window.addEventListener('DOMContentLoaded', obtenerTasaBCV);
-		window.addEventListener('storage', actualizarTotalesPago);
+	// --- Cálculo automático de totales y tasa BCV automática ---
+	const PRECIO_BOLETO = 2; // Precio fijo del boleto en dólares (solo modificable en el código)
+	async function obtenerTasaBCV() {
+		try {
+			const res = await fetch('http://localhost:3000/api/tasa-bcv');
+			const data = await res.json();
+			if (data.tasaBCV) {
+				document.getElementById('tasaBCV').value = data.tasaBCV;
+			}
+		} catch {}
+		actualizarTotalesPago();
+	}
+	function actualizarTotalesPago() {
+		const tasa = parseFloat(document.getElementById('tasaBCV').value) || 1;
+		const val = localStorage.getItem('numerosSeleccionados') || '';
+		const cantidad = val ? val.split(',').filter(x=>x).length : 0;
+		const totalUSD = (PRECIO_BOLETO * cantidad).toFixed(2);
+		const totalBs = (PRECIO_BOLETO * cantidad * tasa).toFixed(2);
+		document.getElementById('totalBox').innerHTML = `Total: <span style="color:#00fff7;">$${totalUSD}</span> | <span style="color:#ffd600;">Bs ${totalBs}</span>`;
+	}
+	window.addEventListener('DOMContentLoaded', obtenerTasaBCV);
+	window.addEventListener('storage', actualizarTotalesPago);
 	</script>
 </body>
 </html>
