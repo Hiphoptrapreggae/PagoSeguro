@@ -4,8 +4,14 @@
 // Mostrar los números seleccionados desde localStorage
 function mostrarSeleccionados() {
     const val = localStorage.getItem('numerosSeleccionados') || '';
-    document.getElementById('seleccionados').textContent = val ? 'Números seleccionados: ' + val : '';
-    document.getElementById('numerosSeleccionados').value = val;
+    const seleccionadosDiv = document.getElementById('seleccionados');
+    if (seleccionadosDiv) {
+        seleccionadosDiv.textContent = val ? 'Números seleccionados: ' + val : '';
+    }
+    const numerosInput = document.getElementById('numerosSeleccionados');
+    if (numerosInput) {
+        numerosInput.value = val;
+    }
 }
 
 mostrarSeleccionados();
