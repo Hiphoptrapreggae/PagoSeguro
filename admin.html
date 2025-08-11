@@ -3,225 +3,380 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración - Rifas</title>
+    <title>Panel de Administración</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 30px;
-            background: rgba(20, 20, 40, 0.95);
+        body {
+            background: #121212;
             color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background: rgba(20, 20, 40, 0.95);
             border-radius: 12px;
-            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 255, 247, 0.3);
         }
-        .admin-table th, .admin-table td {
-            padding: 10px 8px;
-            border-bottom: 1px solid #00fff7;
-            text-align: left;
-        }
-        .admin-table th {
-            background: #00fff7;
-            color: #222;
-        }
-        .admin-table tr:last-child td {
-            border-bottom: none;
-        }
-        .admin-table a {
+        .titulo {
             color: #00fff7;
-            text-decoration: underline;
-        }
-        .admin-title {
-            color: #00fff7;
-            margin-top: 30px;
             text-align: center;
+            margin-bottom: 30px;
         }
-    .btn-admin {
-        background: linear-gradient(90deg, #00fff7, #1a2980);
-        color: #222;
-        font-weight: bold;
-        border: none;
-        border-radius: 7px;
-        padding: 7px 16px;
-        font-size: 1em;
-        cursor: pointer;
-        margin-bottom: 2px;
-        margin-right: 4px;
-        box-shadow: 0 0 7px #00fff7;
-        transition: background 0.3s;
-    }
-    .btn-admin:hover {
-        background: linear-gradient(90deg, #1a2980, #00fff7);
-    }
-    .btn-admin.liberar {
-        background: linear-gradient(90deg, #ff0055, #1a2980);
-        color: #fff;
-        box-shadow: 0 0 7px #ff0055;
-    }
-    .btn-admin.liberar:hover {
-        background: linear-gradient(90deg, #1a2980, #ff0055);
-    }
+        .btn-menu {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px 0;
+            background: linear-gradient(90deg, #00fff7, #1a2980);
+            color: #222;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 7px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        .btn-menu:hover {
+            background: linear-gradient(90deg, #1a2980, #00fff7);
+        }
+        .admin-panel {
+            margin-top: 20px;
+        }
+        .admin-info {
+            margin: 20px 0;
+        }
+        .admin-lista {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            min-height: 40px;
+        }
+        .admin-total {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .btn-warn {
+            background: linear-gradient(90deg, #ffcc00, #ff6600);
+        }
+        .btn-warn:hover {
+            background: linear-gradient(90deg, #ff6600, #ffcc00);
+        }
+        .btn-danger {
+            background: linear-gradient(90deg, #ff0033, #660000);
+        }
+        .btn-danger:hover {
+            background: linear-gradient(90deg, #660000, #ff0033);
+        }
+        .tasa-form {
+            margin-top: 20px;
+        }
+        .tasa-form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .tasa-form input {
+            padding: 10px;
+            width: calc(100% - 22px);
+            margin-bottom: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        .tasa-form button {
+            width: 100%;
+        }
+        .tasa-ayuda {
+            font-size: 0.9em;
+            color: #ffcc00;
+            margin-top: 5px;
+        }
+        .admin-compras {
+            margin-top: 30px;
+        }
+        .compra-pendiente {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .compra-pendiente b {
+            color: #00fff7;
+        }
+        .modal-img-bg {
+            display:none;position:fixed;z-index:1000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);justify-content:center;align-items:center;
+        }
+        .modal-img-bg.active {display:flex;}
+        .modal-img-bg img {max-width:90vw;max-height:90vh;border-radius:12px;box-shadow:0 0 24px #00fff7;}
+        .modal-img-bg .cerrar-modal {position:absolute;top:30px;right:50px;font-size:2.5em;color:#00fff7;cursor:pointer;user-select:none;}
     </style>
 </head>
 <body>
-    <div class="container admin-panel" style="max-width:1200px;margin:40px auto 0 auto;">
-        <h1 class="admin-title">Panel de Administración - Rifas</h1>
-    <div style="margin-bottom:20px;max-width:500px;margin-left:auto;margin-right:auto;">
-            <input type="text" id="filtro" placeholder="Buscar por nombre, número, ciudad, banco, cédula..." style="width:100%;padding:8px;border-radius:6px;border:none;">
+    <div class="container">
+        <h1 class="titulo">Panel de Administración</h1>
+        <div id="adminPanel" class="admin-panel">
+            <button class="btn-menu" id="actualizarBtn">Actualizar Datos</button>
+            <button class="btn-menu btn-warn" id="cerrarVentaBtn">Cerrar venta de boletos</button>
+            <button class="btn-menu btn-danger" id="reiniciarRifaBtn">Reiniciar rifas</button>
+            <button class="btn-menu" id="exportarHistorialBtn" style="float:right;margin-bottom:18px;background:linear-gradient(90deg,#FFD700,#B8860B);color:#222;">Exportar historial CSV</button>
+            <div class="admin-info">
+                <h2>Números Vendidos</h2>
+                <div id="numerosVendidos" class="admin-lista"></div>
+                <h2>Total Recaudado</h2>
+                <div id="totalRecaudado" class="admin-total"></div>
+                <h2>Tasa BCV actual</h2>
+                <div id="tasaActual" class="admin-tasa"></div>
+                <h2>Precio actual en Bs</h2>
+                <div id="precioBs" class="admin-precio"></div>
+                <form id="formTasa" class="tasa-form">
+                    <label for="nuevaTasa">Actualizar tasa BCV manualmente:</label>
+                    <input type="number" id="nuevaTasa" step="0.01" min="0" required>
+                    <button type="submit" class="btn-menu">Actualizar Tasa</button>
+                    <div class="tasa-ayuda">Solo use esta opción si recibe una alerta de error de actualización automática en su correo.</div>
+                </form>
+                <h2>Revisión de Compras Pendientes</h2>
+                <div id="comprasPendientes" class="admin-compras"></div>
+                <h2 style="margin-top:32px;">Historial de Compras Confirmadas</h2>
+                <div id="comprasConfirmadas" class="admin-compras"></div>
+            </div>
         </div>
-    <div style="max-width:500px;margin:0 auto 30px auto;padding:18px 20px 14px 20px;background:rgba(0,255,247,0.07);border-radius:10px;box-shadow:0 0 10px #00fff7 inset;">
-        <h3 style="color:#00fff7;margin-bottom:10px;">Tasa BCV Manual (solo admin)</h3>
-        <form id="formTasaBCV" style="display:flex;gap:10px;align-items:center;">
-            <label for="tasaManual" style="color:#fff;">Tasa BCV (Bs/USD):</label>
-            <input type="number" id="tasaManual" step="0.0001" min="0.01" style="width:120px;">
-            <button type="submit" class="btn-admin">Actualizar</button>
-            <span id="tasaStatus" style="margin-left:10px;color:#00fff7;"></span>
-        </form>
-        <div id="tasaInfo" style="color:#ffd600;margin-top:6px;font-size:0.98em;"></div>
+        <a href="index.html" class="btn-menu volver">Volver al Menú</a>
     </div>
-    <table class="admin-table" id="tablaCompras" style="min-width:1100px;">
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Titular</th>
-                    <th>Correo</th>
-                    <th>Teléfono</th>
-                    <th>Cédula</th>
-                    <th>Ciudad/Estado</th>
-                    <th>Banco</th>
-                    <th>Números</th>
-                    <th>Comprobante</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-    </table>
-    </div>
-    <div style="display:flex;justify-content:center;gap:20px;margin-bottom:30px;">
-        <button class="btn-admin" id="cerrarVentaBtn">Cerrar venta de boletos</button>
-        <button class="btn-admin liberar" id="reiniciarRifaBtn">Reiniciar rifa (liberar todos los números)</button>
-    </div>
+    <div class="modal-img-bg" id="modalImg">
+        <span class="cerrar-modal" id="cerrarModal">&times;</span>
+        <img id="imgModal" src="" alt="Comprobante grande">
     </div>
     <script>
-        let comprasGlobal = [];
-        async function cargarCompras() {
-            const res = await fetch('https://rifasvenezuela.onrender.com/api/compras');
-            comprasGlobal = await res.json();
-            mostrarCompras(comprasGlobal);
+    let tasaActual = 0;
+    function mostrarPrecioBs() {
+        const precioUSD = 5;
+        if (tasaActual > 0) {
+            const precioBs = (precioUSD * tasaActual).toLocaleString('es-VE', {style:'currency', currency:'VES', maximumFractionDigits:2});
+            document.getElementById('precioBs').innerHTML = `<b>${precioBs} Bs</b> por boleto`;
+        } else {
+            document.getElementById('precioBs').innerHTML = '<span style="color:red">No disponible</span>';
         }
-
-        function mostrarCompras(compras) {
-            const tbody = document.querySelector('#tablaCompras tbody');
-            tbody.innerHTML = '';
-            compras.slice().reverse().forEach((compra, idx) => {
-                const tr = document.createElement('tr');
-                let acciones = '';
-                if (String(compra.estado).toLowerCase() !== 'confirmado') {
-                    acciones = `<button class='btn-admin' onclick="confirmarPago(${compras.length-1-idx})">Confirmar</button> <button class='btn-admin liberar' onclick="liberarCompra(${compras.length-1-idx})">Liberar</button>`;
-                }
-                tr.innerHTML = `
-                    <td>${new Date(compra.fecha).toLocaleString()}</td>
-                    <td>${compra.titular || ''}</td>
-                    <td>${compra.correo || ''}</td>
-                    <td>${compra.telefono}</td>
-                    <td>${compra.cedula}</td>
-                    <td>${compra.ubicacion || ''}</td>
-                    <td>${compra.banco}</td>
-                    <td>${Array.isArray(compra.numerosSeleccionados) ? compra.numerosSeleccionados.join(', ') : ''}</td>
-                    <td>${compra.comprobante ? `<a href="https://rifasvenezuela.onrender.com/uploads/${compra.comprobante}" target="_blank">Ver</a>` : ''}</td>
-                    <td>${String(compra.estado).toLowerCase() === 'confirmado' ? '<span style=\'color:#00fff7\'>Confirmado</span>' : '<span style=\'color:#ff0\'>Pendiente</span>'}</td>
-                    <td>${acciones}</td>
-                `;
-                tbody.appendChild(tr);
-            });
+    }
+    async function cargarDatosAdmin() {
+        try {
+            const res = await fetch('https://rifasvenezuela.onrender.com/api/numeros-vendidos');
+            const vendidos = await res.json();
+            document.getElementById('numerosVendidos').textContent = vendidos.length > 0 ? vendidos.sort((a,b)=>a-b).join(', ') : 'Ninguno';
+            document.getElementById('totalRecaudado').textContent = '$' + (vendidos.length * 5);
+        } catch {
+            document.getElementById('numerosVendidos').textContent = 'Error al cargar.';
+            document.getElementById('totalRecaudado').textContent = 'Error';
         }
-
-        async function confirmarPago(id) {
-            if (!confirm('¿Confirmar el pago y enviar correo al cliente?')) return;
-            const res = await fetch('https://rifasvenezuela.onrender.com/api/confirmar', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id })
-            });
-            const data = await res.json();
-            alert(data.mensaje || data.error);
-            cargarCompras();
-        }
-
-        async function liberarCompra(id) {
-            if (!confirm('¿Liberar estos números? Esta acción no se puede deshacer.')) return;
-            const res = await fetch('https://rifasvenezuela.onrender.com/api/liberar', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id })
-            });
-            const data = await res.json();
-            alert(data.mensaje || data.error);
-            cargarCompras();
-            // Notificar a la página de selección para recargar
-            fetch('https://rifasvenezuela.onrender.com/api/notificar-liberacion', { method: 'POST' });
-        }
-
-        document.getElementById('filtro').addEventListener('input', function() {
-            const val = this.value.trim().toLowerCase();
-            if (!val) return mostrarCompras(comprasGlobal);
-            const filtradas = comprasGlobal.filter(compra => {
-                return (
-                    (compra.titular && compra.titular.toLowerCase().includes(val)) ||
-                    (compra.telefono && compra.telefono.toLowerCase().includes(val)) ||
-                    (compra.cedula && compra.cedula.toLowerCase().includes(val)) ||
-                    (compra.ubicacion && compra.ubicacion.toLowerCase().includes(val)) ||
-                    (compra.banco && compra.banco.toLowerCase().includes(val)) ||
-                    (Array.isArray(compra.numerosSeleccionados) && compra.numerosSeleccionados.map(n=>n.toString()).join(',').includes(val))
-                );
-            });
-            mostrarCompras(filtradas);
-        });
-
-        document.getElementById('cerrarVentaBtn').addEventListener('click', async function() {
-            if (!confirm('¿Seguro que deseas cerrar la venta de boletos? Los usuarios no podrán comprar hasta reiniciar la rifa.')) return;
-            await fetch('https://rifasvenezuela.onrender.com/api/cerrar-venta', { method: 'POST' });
-            alert('Venta de boletos cerrada.');
-        });
-        document.getElementById('reiniciarRifaBtn').addEventListener('click', async function() {
-            if (!confirm('¿Seguro que deseas reiniciar la rifa? Esto liberará todos los números y eliminará todas las compras.')) return;
-            await fetch('https://rifasvenezuela.onrender.com/api/reiniciar-rifa', { method: 'POST' });
-            alert('Rifa reiniciada. Todos los números están disponibles.');
-            cargarCompras();
-        });
-
-        // --- Tasa BCV manual admin ---
-        async function cargarTasaBCV() {
+        // Consultar tasa actual
+        try {
             const res = await fetch('https://rifasvenezuela.onrender.com/api/tasa-bcv');
             const data = await res.json();
-            if (data.tasaBCV) {
-                document.getElementById('tasaManual').value = data.tasaBCV;
-                document.getElementById('tasaInfo').textContent = data.manual ? 'Tasa establecida manualmente.' : 'Tasa obtenida automáticamente del BCV.';
-            } else {
-                document.getElementById('tasaInfo').textContent = 'No se pudo obtener la tasa actual.';
-            }
+            // Compatibilidad con backend: puede ser data.tasaBCV o data.tasa
+            tasaActual = data.tasaBCV || data.tasa || 0;
+            document.getElementById('tasaActual').textContent = tasaActual ? tasaActual + ' Bs/USD' : 'No disponible';
+        } catch {
+            tasaActual = 0;
+            document.getElementById('tasaActual').textContent = 'Error al consultar tasa.';
         }
-        document.getElementById('formTasaBCV').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const tasa = document.getElementById('tasaManual').value;
-            const status = document.getElementById('tasaStatus');
-            status.textContent = 'Actualizando...';
+        mostrarPrecioBs();
+        // Cargar compras pendientes
+        cargarComprasPendientes();
+    }
+    document.getElementById('actualizarBtn').addEventListener('click', cargarDatosAdmin);
+    cargarDatosAdmin();
+
+    document.getElementById('cerrarVentaBtn').addEventListener('click', async function() {
+        if (!confirm('¿Seguro que deseas cerrar la venta de boletos? Esta acción es reversible solo reiniciando la rifa.')) return;
+        try {
+            const res = await fetch('https://rifasvenezuela.onrender.com/api/cerrar-venta', {method:'POST'});
+            if (res.ok) {
+                alert('Venta de boletos cerrada.');
+            } else {
+                alert('Error al cerrar la venta.');
+            }
+        } catch {
+            alert('Error de conexión al cerrar la venta.');
+        }
+    });
+    document.getElementById('reiniciarRifaBtn').addEventListener('click', async function() {
+        if (!confirm('¿Seguro que deseas reiniciar la rifa? Esta acción eliminará todos los boletos vendidos.')) return;
+        try {
+            const res = await fetch('https://rifasvenezuela.onrender.com/api/reiniciar-rifa', {method:'POST'});
+            if (res.ok) {
+                alert('Rifa reiniciada.');
+                cargarDatosAdmin();
+            } else {
+                alert('Error al reiniciar la rifa.');
+            }
+        } catch {
+            alert('Error de conexión al reiniciar la rifa.');
+        }
+    });
+    // Actualizar tasa manualmente
+    document.getElementById('formTasa').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const nuevaTasa = parseFloat(document.getElementById('nuevaTasa').value);
+        if (!nuevaTasa || nuevaTasa <= 0) {
+            alert('Ingrese una tasa válida.');
+            return;
+        }
+        if (!confirm('¿Actualizar la tasa BCV a ' + nuevaTasa + ' Bs/USD?')) return;
+        try {
             const res = await fetch('https://rifasvenezuela.onrender.com/api/tasa-bcv', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ tasa })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({tasa: nuevaTasa})
             });
-            const data = await res.json();
-            if (data.tasa) {
-                status.textContent = '¡Tasa actualizada!';
-                document.getElementById('tasaInfo').textContent = 'Tasa establecida manualmente.';
+            if (res.ok) {
+                alert('Tasa actualizada correctamente.');
+                cargarDatosAdmin();
             } else {
-                status.textContent = data.error || 'Error al actualizar.';
+                alert('Error al actualizar la tasa.');
             }
-        });
-        cargarTasaBCV();
-        cargarCompras();
+        } catch {
+            alert('Error de conexión al actualizar la tasa.');
+        }
+    });
+    // Compras pendientes
+    async function cargarComprasPendientes() {
+        const cont = document.getElementById('comprasPendientes');
+        const contConfirmadas = document.getElementById('comprasConfirmadas');
+        cont.innerHTML = 'Cargando...';
+        contConfirmadas.innerHTML = 'Cargando...';
+        try {
+            const res = await fetch('https://rifasvenezuela.onrender.com/api/compras');
+            const compras = await res.json();
+            // Filtrar compras
+            const pendientes = Array.isArray(compras) ? compras.map((c,i)=>({...c,_id:i})).filter(c => c.estado === 'pendiente') : [];
+            const confirmadas = Array.isArray(compras) ? compras.map((c,i)=>({...c,_id:i})).filter(c => c.estado === 'confirmado') : [];
+            // Pendientes
+            if (pendientes.length === 0) {
+                cont.innerHTML = '<span style="color:gray">No hay compras pendientes.</span>';
+            } else {
+                cont.innerHTML = '';
+                pendientes.forEach(compra => {
+                    const div = document.createElement('div');
+                    div.className = 'compra-pendiente';
+                    let comprobanteHtml = '';
+                    if (compra.comprobante) {
+                        const url = `https://rifasvenezuela.onrender.com/uploads/${compra.comprobante}`;
+                        comprobanteHtml = `<div style='margin:10px 0'><b>Comprobante:</b><br><img src="${url}" alt="Comprobante" style="max-width:220px;max-height:220px;border-radius:8px;box-shadow:0 0 8px #00fff7;cursor:pointer" onclick="verImagenModal('${url}')"></div>`;
+                    }
+                    div.innerHTML = `
+                        <b>Cliente:</b> ${compra.titular || compra.nombre} <br>
+                        <b>Email:</b> ${compra.correo || compra.email} <br>
+                        <b>Teléfono:</b> ${compra.telefono || ''} <br>
+                        <b>Números:</b> ${Array.isArray(compra.numerosSeleccionados) ? compra.numerosSeleccionados.join(', ') : ''} <br>
+                        <b>Monto:</b> $${compra.monto || (Array.isArray(compra.numerosSeleccionados) ? compra.numerosSeleccionados.length * 5 : '')} <br>
+                        ${comprobanteHtml}
+                        <button class='btn-menu' onclick='confirmarCompra(${compra._id})'>Confirmar y Enviar Correo</button>
+                        <button class='btn-menu btn-danger' onclick='liberarCompra(${compra._id})'>Liberar</button>
+                    `;
+                    cont.appendChild(div);
+                });
+            }
+            // Confirmadas
+            if (confirmadas.length === 0) {
+                contConfirmadas.innerHTML = '<span style="color:gray">No hay compras confirmadas.</span>';
+            } else {
+                contConfirmadas.innerHTML = '';
+                confirmadas.forEach(compra => {
+                    const div = document.createElement('div');
+                    div.className = 'compra-pendiente';
+                    let comprobanteHtml = '';
+                    if (compra.comprobante) {
+                        const url = `https://rifasvenezuela.onrender.com/uploads/${compra.comprobante}`;
+                        comprobanteHtml = `<div style='margin:10px 0'><b>Comprobante:</b><br><img src="${url}" alt="Comprobante" style="max-width:220px;max-height:220px;border-radius:8px;box-shadow:0 0 8px #00fff7;cursor:pointer" onclick="verImagenModal('${url}')"></div>`;
+                    }
+                    div.innerHTML = `
+                        <b>Cliente:</b> ${compra.titular || compra.nombre} <br>
+                        <b>Email:</b> ${compra.correo || compra.email} <br>
+                        <b>Teléfono:</b> ${compra.telefono || ''} <br>
+                        <b>Números:</b> ${Array.isArray(compra.numerosSeleccionados) ? compra.numerosSeleccionados.join(', ') : ''} <br>
+                        <b>Monto:</b> $${compra.monto || (Array.isArray(compra.numerosSeleccionados) ? compra.numerosSeleccionados.length * 5 : '')} <br>
+                        ${comprobanteHtml}
+                        <span style='color:#00fff7;font-weight:bold;'>Confirmado</span>
+                    `;
+                    contConfirmadas.appendChild(div);
+                });
+            }
+        } catch {
+            cont.innerHTML = '<span style="color:red">Error al cargar compras pendientes.</span>';
+            contConfirmadas.innerHTML = '<span style="color:red">Error al cargar compras confirmadas.</span>';
+        }
+    }
+    window.confirmarCompra = async function(id) {
+        if (!confirm('¿Confirmar el pago y enviar correo al cliente?')) return;
+        try {
+            const res = await fetch('https://rifasvenezuela.onrender.com/api/confirmar', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id})
+            });
+            if (res.ok) {
+                alert('Compra confirmada y correo enviado.');
+                cargarComprasPendientes();
+                cargarDatosAdmin();
+            } else {
+                alert('Error al confirmar la compra.');
+            }
+        } catch {
+            alert('Error de conexión al confirmar la compra.');
+        }
+    }
+    window.liberarCompra = async function(id) {
+        if (!confirm('¿Liberar esta compra? Los números volverán a estar disponibles.')) return;
+        try {
+            const res = await fetch('https://rifasvenezuela.onrender.com/api/liberar', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id})
+            });
+            if (res.ok) {
+                alert('Compra liberada.');
+                cargarComprasPendientes();
+                cargarDatosAdmin();
+            } else {
+                alert('Error al liberar la compra.');
+            }
+        } catch {
+            alert('Error de conexión al liberar la compra.');
+        }
+    }
+    // Modal para ver imagen grande
+    window.verImagenModal = function(url) {
+        document.getElementById('imgModal').src = url;
+        document.getElementById('modalImg').classList.add('active');
+    }
+    document.getElementById('cerrarModal').onclick = function() {
+        document.getElementById('modalImg').classList.remove('active');
+        document.getElementById('imgModal').src = '';
+    }
+    document.getElementById('modalImg').onclick = function(e) {
+        if (e.target === this) {
+            this.classList.remove('active');
+            document.getElementById('imgModal').src = '';
+        }
+    }
+    // Botón para exportar historial CSV
+    document.getElementById('exportarHistorialBtn').onclick = function() {
+        fetch('https://rifasvenezuela.onrender.com/api/exportar-historial')
+            .then(resp => {
+                if (!resp.ok) throw new Error('No se pudo exportar el historial.');
+                return resp.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'historial_rifa.csv';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(() => alert('No se pudo exportar el historial.'));
+    };
     </script>
 </body>
 </html>

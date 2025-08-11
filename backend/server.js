@@ -1,3 +1,38 @@
+// Endpoint para exportar historial de pagos como CSV
+app.get('/api/exportar-historial', (req, res) => {
+    if (!fs.existsSync(pagosPath)) {
+        return res.status(404).send('No hay historial disponible.');
+    }
+    const lines = fs.readFileSync(pagosPath, 'utf-8').split('\n').filter(Boolean);
+    if (lines.length === 0) {
+        return res.status(404).send('No hay historial disponible.');
+    }
+    const registros = lines.map(line => {
+        try { return JSON.parse(line); } catch { return null; }
+    }).filter(Boolean);
+    // Encabezados CSV
+    const headers = ['Fecha','Titular','Cédula','Correo','Teléfono','Banco','Referencia','Números','Monto $','Monto Bs','Estado','Comprobante'];
+    const csvRows = [headers.join(',')];
+    registros.forEach(r => {
+        csvRows.push([
+            r.fecha || '',
+            '"'+(r.titular||'')+'"',
+            r.cedula || '',
+            r.correo || '',
+            r.telefono || '',
+            r.banco || '',
+            r.referencia || '',
+            '"'+(Array.isArray(r.numerosSeleccionados) ? r.numerosSeleccionados.join(' ') : '')+'"',
+            r.montoUSD || '',
+            r.montoBS || '',
+            r.estado || '',
+            r.comprobante ? (req.protocol + '://' + req.get('host') + '/uploads/' + r.comprobante) : ''
+        ].join(','));
+    });
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename="historial_rifa.csv"');
+    res.send(csvRows.join('\r\n'));
+});
 // Permitir peticiones https sin validar certificados (solo desarrollo)
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 console.log('server.js iniciado');
@@ -106,7 +141,7 @@ app.post('/api/pago', upload.single('comprobante'), (req, res) => {
     if (!banco || !telefono || !cedula || !comprobante || !numerosSeleccionados || !titular || !ubicacion || !correo) {
         return res.status(400).json({ error: 'Faltan datos, banco, comprobante, titular, ubicación, correo o números de rifa.' });
     }
-    // Guardar registro en archivo (puedes migrar a base de datos luego)
+    // Guardar registro en archivo (crea pagos.json si no existe)
     const registro = {
         banco,
         telefono,
@@ -119,7 +154,9 @@ app.post('/api/pago', upload.single('comprobante'), (req, res) => {
         comprobante: comprobante.filename,
         fecha: new Date().toISOString()
     };
-    fs.appendFileSync(path.join(__dirname, 'pagos.json'), JSON.stringify(registro) + '\n');
+    const pagosPath = path.join(__dirname, 'pagos.json');
+    if (!fs.existsSync(pagosPath)) fs.writeFileSync(pagosPath, '');
+    fs.appendFileSync(pagosPath, JSON.stringify(registro) + '\n');
     res.json({ mensaje: '¡Tus números han sido apartados! Serán confirmados cuando se verifique el pago en la cuenta bancaria.' });
 });
 

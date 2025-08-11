@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de la Rifa</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+    body { background: #10101a; min-height: 100vh; }
+    .container { background: #131326; border-radius: 24px; box-shadow: 0 0 24px #00fff7, 0 0 8px #1a2980; margin: 40px auto; max-width: 700px; padding: 40px 30px; }
+    .titulo { color: #00fff7; text-shadow: 0 0 8px #00fff7; font-family: 'Orbitron', Arial, sans-serif; font-size: 2.2em; text-align: center; margin-bottom: 24px; }
+    .resultados-lista { color: #fff; text-align: center; margin-bottom: 18px; }
+    .btn-menu { background: linear-gradient(90deg, #00fff7 0%, #1a2980 100%); color: #10101a; font-weight: bold; border: none; border-radius: 10px; padding: 12px 28px; font-size: 1.1em; box-shadow: 0 0 8px #00fff7; cursor: pointer; transition: background 0.2s, color 0.2s; }
+    .btn-menu:hover { background: linear-gradient(90deg, #1a2980 0%, #00fff7 100%); color: #fff; }
+    .volver { margin-top: 18px; display: block; width: fit-content; margin-left: auto; margin-right: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="titulo">Resultados de la Rifa</h1>
+        <div class="resultados-lista" id="resultadosLista">Próximamente se mostrarán los ganadores aquí.</div>
+        <a href="index.html" class="btn-menu volver">Volver al Menú</a>
+    </div>
+    <script>
+    // Simulación de resultados (puedes conectar a backend luego)
+    // const resultados = [{numero: 23, ganador: 'Juan Pérez'}, ...];
+    // let html = '';
+    // resultados.forEach(r => {
+    //   html += `<div class='resultado-item'>N° <b>${r.numero}</b> - Ganador: <b>${r.ganador}</b></div>`;
+    // });
+    // document.getElementById('resultados-lista').innerHTML = html;
+    </script>
+</body>
+</html>
