@@ -1,5 +1,22 @@
 // ...existing code...
 // Endpoint para exportar historial de pagos como CSV (debe ir después de inicializar app)
+// Permitir peticiones https sin validar certificados (solo desarrollo)
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+console.log('server.js iniciado');
+const express = require('express');
+const cors = require('cors');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const { enviarCorreo } = require('./mailer');
+const tasaRouter = require('./tasa');
+const app = express();
+const PORT = 3000;
+app.use(cors());
+app.use(express.json());
+app.use('/api', tasaRouter);
+
+// Endpoint para exportar historial de pagos como CSV
 app.get('/api/exportar-historial', (req, res) => {
     const pagosPath = path.join(__dirname, 'pagos.json');
     if (!fs.existsSync(pagosPath)) {
@@ -35,21 +52,6 @@ app.get('/api/exportar-historial', (req, res) => {
     res.setHeader('Content-Disposition', 'attachment; filename="historial_rifa.csv"');
     res.send(csvRows.join('\r\n'));
 });
-// Permitir peticiones https sin validar certificados (solo desarrollo)
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-console.log('server.js iniciado');
-const express = require('express');
-const cors = require('cors');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
-const { enviarCorreo } = require('./mailer');
-const tasaRouter = require('./tasa');
-const app = express();
-const PORT = 3000;
-app.use(cors());
-app.use(express.json());
-app.use('/api', tasaRouter);
 
 // Estado de venta de boletos (persistente en archivo)
 const estadoPath = path.join(__dirname, 'estado_rifa.json');
