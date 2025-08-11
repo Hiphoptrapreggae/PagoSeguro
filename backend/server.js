@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/api', tasaRouter);
 
-// Endpoint para exportar historial de pagos como CSV
+// Endpoint para exportar historial de pagos como CSV (orden y nombres mejorados)
 app.get('/api/exportar-historial', (req, res) => {
     const pagosPath = path.join(__dirname, 'pagos.json');
     if (!fs.existsSync(pagosPath)) {
@@ -29,19 +29,32 @@ app.get('/api/exportar-historial', (req, res) => {
     const registros = lines.map(line => {
         try { return JSON.parse(line); } catch { return null; }
     }).filter(Boolean);
-    // Encabezados CSV
-    const headers = ['Fecha','Titular','Cédula','Correo','Teléfono','Banco','Referencia','Números','Monto $','Monto Bs','Estado','Comprobante'];
+    // Encabezados CSV mejorados
+    const headers = [
+        'Fecha',
+        'Titular',
+        'Cédula',
+        'Teléfono',
+        'Correo',
+        'Banco',
+        'Referencia',
+        'Números Seleccionados',
+        'Monto USD',
+        'Monto Bs',
+        'Estado',
+        'URL Comprobante'
+    ];
     const csvRows = [headers.join(',')];
     registros.forEach(r => {
         csvRows.push([
             r.fecha || '',
             '"'+(r.titular||'')+'"',
             r.cedula || '',
-            r.correo || '',
             r.telefono || '',
+            r.correo || '',
             r.banco || '',
             r.referencia || '',
-            '"'+(Array.isArray(r.numerosSeleccionados) ? r.numerosSeleccionados.join(' ') : '')+'"',
+            '"'+(Array.isArray(r.numerosSeleccionados) ? r.numerosSeleccionados.join(', ') : '')+'"',
             r.montoUSD || '',
             r.montoBS || '',
             r.estado || '',
