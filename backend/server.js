@@ -1,8 +1,7 @@
 // ...existing code...
 // Endpoint para exportar historial de pagos como CSV (debe ir después de inicializar app)
 app.get('/api/exportar-historial', (req, res) => {
-    const pagosPath = require('path').join(__dirname, 'pagos.json');
-    const fs = require('fs');
+    const pagosPath = path.join(__dirname, 'pagos.json');
     if (!fs.existsSync(pagosPath)) {
         return res.status(404).send('No hay historial disponible.');
     }
