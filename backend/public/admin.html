@@ -1,1 +1,20 @@
-// ...existing code from admin.html...
+<!DOCTYPE html>
+<html lang="es">
+<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Panel de Administración</title>
+		<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+		<script>
+		// Si no estamos en Render, redirigir a la página principal
+		if (!window.location.hostname.includes('onrender.com')) {
+			window.location.href = 'index.html';
+		}
+		</script>
+		<div style="text-align:center;margin-top:40px;color:#FFD700;font-size:1.3em;">
+			Cargando panel de administración...
+		</div>
+</body>
+</html>
