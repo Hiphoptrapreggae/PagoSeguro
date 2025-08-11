@@ -18,11 +18,22 @@
     <div class="container">
         <h1 class="titulo">Menú Principal</h1>
         <div class="menu-lista">
-            <a href="seleccion.html" class="btn-menu">Seleccionar Números</a>
-            <a href="pago.html" class="btn-menu">Realizar Pago</a>
-            <a href="resultados.html" class="btn-menu">Ver Resultados</a>
-            <a href="admin.html" class="btn-menu">Panel de Administración</a>
+                        <a href="seleccion.html" class="btn-menu">Seleccionar Números</a>
+                        <a href="pago.html" class="btn-menu">Realizar Pago</a>
+                        <a href="resultados.html" class="btn-menu">Ver Resultados</a>
+                        <a href="admin.html" class="btn-menu" id="adminBtnMenu">Panel de Administración</a>
         </div>
+                <script>
+                // Redirigir a Render si estamos en GitHub Pages
+                document.addEventListener('DOMContentLoaded', function() {
+                    var adminBtn = document.getElementById('adminBtnMenu');
+                    if (adminBtn && window.location.hostname.endsWith('github.io')) {
+                        adminBtn.href = 'https://rifasvenezuela.onrender.com/admin-login.html';
+                        adminBtn.target = '_blank';
+                    }
+                });
+                </script>
+        <script src="script-admin.js"></script>
     </div>
 </body>
 </html>
