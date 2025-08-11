@@ -1,0 +1,172 @@
+.precio-info {
+	color: #00fff7;
+	font-size: 1.1em;
+	margin-bottom: 10px;
+}
+body {
+	background: linear-gradient(135deg, #0f2027, #2c5364, #1a2980);
+	color: #fff;
+	font-family: 'Orbitron', Arial, sans-serif;
+	min-height: 100vh;
+	margin: 0;
+}
+/* Estilo general para todas las páginas */
+.container {
+	background: #f5fafd;
+	border-radius: 24px;
+	box-shadow: 0 0 24px #b2ebf2, 0 0 8px #e0f7fa;
+	padding: 48px 30px 36px 30px;
+	width: 98%;
+	max-width: 1400px;
+	text-align: center;
+	margin: 40px auto 0 auto;
+}
+
+/* Solo para el panel de administración: ancho y sin centrado vertical */
+.container.admin-panel {
+	max-width: 1200px;
+	text-align: left;
+	padding: 40px 30px 30px 30px;
+}
+
+.rifa-section {
+	margin-bottom: 30px;
+	background: rgba(0,255,247,0.10);
+	border-radius: 12px;
+	padding: 18px 10px 10px 10px;
+	box-shadow: 0 0 15px #00fff733 inset;
+}
+.rifa-section h2 {
+	color: #00fff7;
+	margin-bottom: 10px;
+	font-size: 1.3em;
+	letter-spacing: 1px;
+}
+.numeros-rifa {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 14px;
+	justify-content: center;
+	margin-bottom: 28px;
+	max-width: 1200px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.numero-rifa {
+	background: #e0f7fa;
+	color: #222;
+	border: 2px solid #00bcd4;
+	border-radius: 12px;
+	width: 48px;
+	height: 48px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: bold;
+	font-size: 1.2em;
+	cursor: pointer;
+	transition: background 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s;
+	box-shadow: 0 2px 8px #b2ebf2;
+	user-select: none;
+	margin-bottom: 4px;
+}
+.numero-rifa.selected {
+	background: #00bcd4;
+	color: #fff;
+	border: 2.5px solid #222;
+	box-shadow: 0 2px 12px #b2ebf2;
+	font-size: 1.25em;
+}
+.seleccionados {
+	margin-bottom: 10px;
+	color: #00fff7;
+	font-size: 1em;
+	min-height: 24px;
+}
+h1 {
+	font-size: 2.5em;
+	margin-bottom: 28px;
+	letter-spacing: 2.5px;
+	color: #00bcd4;
+	text-shadow: 0 2px 8px #b2ebf2;
+	font-family: 'Orbitron', Arial, sans-serif;
+}
+form {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	width: 100%;
+	max-width: 420px;
+	margin: 0 auto;
+	align-items: center;
+}
+input, select, button {
+	padding: 10px;
+	border-radius: 8px;
+	border: none;
+	font-size: 1em;
+	width: 100%;
+	max-width: 420px;
+	margin-bottom: 2px;
+	background: #1a2633;
+	color: #e3eaf2;
+	box-shadow: 0 1px 4px #00bcd422 inset;
+	outline: none;
+	transition: box-shadow 0.2s, border 0.2s;
+}
+input:focus, select:focus {
+	box-shadow: 0 0 0 2px #00bcd4;
+}
+input[type="file"] {
+	background: #222;
+	color: #fff;
+	box-shadow: none;
+}
+button, .btn-continuar, #suerteBtn {
+	background: linear-gradient(90deg, #00bcd4 60%, #16222A 100%);
+	color: #fff;
+	font-weight: 600;
+	border: none;
+	border-radius: 10px;
+	padding: 12px 28px;
+	font-size: 1.15em;
+	cursor: pointer;
+	box-shadow: 0 2px 8px #00bcd4a0;
+	transition: background 0.3s, box-shadow 0.2s;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	letter-spacing: 1px;
+}
+.info {
+	margin-top: 30px;
+	background: rgba(0,188,212,0.08);
+	border-radius: 12px;
+	padding: 18px 10px 10px 10px;
+	box-shadow: 0 0 10px #00bcd4 inset;
+	color: #e3eaf2;
+	width: 100%;
+	max-width: 420px;
+	margin-left: auto;
+	margin-right: auto;
+}
+/* Responsive */
+@media (max-width: 900px) {
+	.container {
+		max-width: 98vw;
+		padding: 20px 2vw;
+	}
+	.info, form, input, select, button {
+		max-width: 98vw;
+	}
+}
+@media (max-width: 600px) {
+	.container {
+		padding: 10px 1vw;
+	}
+	h1 {
+		font-size: 1.3em;
+	}
+	.info, form, input, select, button {
+		max-width: 99vw;
+	}
+}

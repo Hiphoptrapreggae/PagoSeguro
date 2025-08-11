@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Administrador</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      background: #111;
+      color: #FFD700;
+      font-family: 'Orbitron', Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-container {
+      background: rgba(30,30,30,0.95);
+      border-radius: 16px;
+      box-shadow: 0 0 24px #000a, 0 0 0 2px #FFD70044;
+      padding: 2.5rem 2rem 2rem 2rem;
+      min-width: 320px;
+      max-width: 90vw;
+    }
+    .login-container h2 {
+      margin-bottom: 1.5rem;
+      text-align: center;
+      color: #FFD700;
+      letter-spacing: 2px;
+    }
+    .login-container label {
+      color: #FFD700;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    .login-container input {
+      width: 100%;
+      padding: 0.7rem;
+      margin-bottom: 1.2rem;
+      border-radius: 8px;
+      border: 1px solid #FFD70044;
+      background: #222;
+      color: #FFD700;
+      font-size: 1rem;
+    }
+    .login-container button {
+      width: 100%;
+      padding: 0.8rem;
+      background: linear-gradient(90deg, #FFD700 60%, #bfa100 100%);
+      color: #111;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .login-container button:hover {
+      background: linear-gradient(90deg, #bfa100 0%, #FFD700 100%);
+    }
+    .login-container .error {
+      color: #ff4d4d;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Acceso Administrador</h2>
+    <form id="loginForm">
+      <label for="usuario">Usuario</label>
+      <input type="text" id="usuario" name="usuario" required autocomplete="username">
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" name="password" required autocomplete="current-password">
+      <div class="error" id="errorMsg" style="display:none;"></div>
+      <button type="submit">Entrar</button>
+    </form>
+  </div>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const usuario = document.getElementById('usuario').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const res = await fetch('/api/login-admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuario, password })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem('adminToken', data.token);
+        window.location.href = 'admin.html';
+      } else {
+        document.getElementById('errorMsg').style.display = 'block';
+        document.getElementById('errorMsg').textContent = 'Credenciales incorrectas';
+      }
+    });
+  </script>
+</body>
+</html>

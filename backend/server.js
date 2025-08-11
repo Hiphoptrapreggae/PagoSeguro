@@ -10,60 +10,90 @@ const path = require('path');
 const fs = require('fs');
 const { enviarCorreo } = require('./mailer');
 const tasaRouter = require('./tasa');
+const jwt = require('jsonwebtoken');
+const ADMIN_USER = process.env.ADMIN_USER || 'admin';
+const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
+const JWT_SECRET = process.env.JWT_SECRET || 'supersecreto';
 const app = express();
 const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 app.use('/api', tasaRouter);
 
+// Middleware para proteger rutas admin
+function verificarAdmin(req, res, next) {
+    const auth = req.headers['authorization'];
+    if (!auth) return res.status(401).json({ error: 'No autorizado' });
+    const token = auth.split(' ')[1];
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        if (decoded && decoded.admin) return next();
+        return res.status(401).json({ error: 'Token inválido' });
+    } catch {
+        return res.status(401).json({ error: 'Token inválido' });
+    }
+}
+
+// Endpoint de login admin
+app.post('/api/login-admin', (req, res) => {
+    const { usuario, password } = req.body;
+    if (usuario === ADMIN_USER && password === ADMIN_PASS) {
+        const token = jwt.sign({ admin: true }, JWT_SECRET, { expiresIn: '2h' });
+        return res.json({ token });
+    }
+    return res.status(401).json({ error: 'Credenciales incorrectas' });
+});
+
 // Endpoint para exportar historial de pagos como CSV (orden y nombres mejorados)
 app.get('/api/exportar-historial', (req, res) => {
-    const pagosPath = path.join(__dirname, 'pagos.json');
-    if (!fs.existsSync(pagosPath)) {
-        return res.status(404).send('No hay historial disponible.');
-    }
-    const lines = fs.readFileSync(pagosPath, 'utf-8').split('\n').filter(Boolean);
-    if (lines.length === 0) {
-        return res.status(404).send('No hay historial disponible.');
-    }
-    const registros = lines.map(line => {
-        try { return JSON.parse(line); } catch { return null; }
-    }).filter(Boolean);
-    // Encabezados CSV mejorados
-    const headers = [
-        'Fecha',
-        'Titular',
-        'Cédula',
-        'Teléfono',
-        'Correo',
-        'Banco',
-        'Referencia',
-        'Números Seleccionados',
-        'Monto USD',
-        'Monto Bs',
-        'Estado',
-        'URL Comprobante'
-    ];
-    const csvRows = [headers.join(',')];
-    registros.forEach(r => {
-        csvRows.push([
-            r.fecha || '',
-            '"'+(r.titular||'')+'"',
-            r.cedula || '',
-            r.telefono || '',
-            r.correo || '',
-            r.banco || '',
-            r.referencia || '',
-            '"'+(Array.isArray(r.numerosSeleccionados) ? r.numerosSeleccionados.join(', ') : '')+'"',
-            r.montoUSD || '',
-            r.montoBS || '',
-            r.estado || '',
-            r.comprobante ? (req.protocol + '://' + req.get('host') + '/uploads/' + r.comprobante) : ''
-        ].join(','));
+    verificarAdmin(req, res, () => {
+        const pagosPath = path.join(__dirname, 'pagos.json');
+        if (!fs.existsSync(pagosPath)) {
+            return res.status(404).send('No hay historial disponible.');
+        }
+        const lines = fs.readFileSync(pagosPath, 'utf-8').split('\n').filter(Boolean);
+        if (lines.length === 0) {
+            return res.status(404).send('No hay historial disponible.');
+        }
+        const registros = lines.map(line => {
+            try { return JSON.parse(line); } catch { return null; }
+        }).filter(Boolean);
+        // Encabezados CSV mejorados
+        const headers = [
+            'Fecha',
+            'Titular',
+            'Cédula',
+            'Teléfono',
+            'Correo',
+            'Banco',
+            'Referencia',
+            'Números Seleccionados',
+            'Monto USD',
+            'Monto Bs',
+            'Estado',
+            'URL Comprobante'
+        ];
+        const csvRows = [headers.join(',')];
+        registros.forEach(r => {
+            csvRows.push([
+                r.fecha || '',
+                '"'+(r.titular||'')+'"',
+                r.cedula || '',
+                r.telefono || '',
+                r.correo || '',
+                r.banco || '',
+                r.referencia || '',
+                '"'+(Array.isArray(r.numerosSeleccionados) ? r.numerosSeleccionados.join(', ') : '')+'"',
+                r.montoUSD || '',
+                r.montoBS || '',
+                r.estado || '',
+                r.comprobante ? (req.protocol + '://' + req.get('host') + '/uploads/' + r.comprobante) : ''
+            ].join(','));
+        });
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', 'attachment; filename="historial_rifa.csv"');
+        res.send(csvRows.join('\r\n'));
     });
-    res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', 'attachment; filename="historial_rifa.csv"');
-    res.send(csvRows.join('\r\n'));
 });
 
 // Estado de venta de boletos (persistente en archivo)
@@ -179,6 +209,11 @@ app.post('/api/pago', upload.single('comprobante'), (req, res) => {
 
 // Servir comprobantes (opcional, para administración)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Servir archivos de comprobantes
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Servir archivos estáticos del frontend (HTML, CSS, JS) desde /public
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Ruta para confirmar pago y enviar correo
 app.post('/api/confirmar', async (req, res) => {
